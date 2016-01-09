@@ -152,5 +152,9 @@ shinyServer
       updateTable()
     }, sanitize.text.function = function(x) x)
     
+    on.exit({
+      cat("clean up\n")
+      file.remove("..\\kb\\naive_bayesian_model")
+    })
   }
 )

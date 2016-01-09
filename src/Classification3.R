@@ -289,7 +289,19 @@ class_bayesian = function(abstracts, rp.tfidf, dr.tfidf, list)
   rp.tfidf1<-transposeDF(rp.tfidf,1)
   mining.set<-Reduce(function(x, y) merge(x, y, all=T), list(dr.tfidf1,rp.tfidf1))
   col.names<-names(mining.set)
-  pred.model<-naiveBayes(category~., data=train.df)
+
+  if ((file.exists("..\\kb\\naive_bayesian_model")) &&
+      (file.info("..\\kb\\naive_bayesian_model")$mtime > 
+       file.info("..\\kb\\naive_bayesian.csv")$mtime))
+  {
+    load("..\\kb\\naive_bayesian_model")
+  }
+  else
+  {
+    pred.model<-naiveBayes(category~., data=train.df)
+    save(pred.model, file = "..\\kb\\naive_bayesian_model")
+  }
+  
   lexi<-colnames(train.df[-1])
   test.df<-transform2df(abstracts,col.names,mining.set,lexi,1,.progress='text')
   test.df<-prep.set(test.df,col.names)
