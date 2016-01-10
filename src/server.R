@@ -59,10 +59,14 @@ shinyServer
           
           titles = result[,1]
           urls = result[,2]
-          Results = paste0("<a href='",  urls, "' target='_blank'>", titles, "</a>")
+          Titles = paste0("<a href='",  urls, "' target='_blank'>", titles, "</a>")
+          Category = result$Class
+          Word_Count = result$wordCount
+          Naive_Bayesian = result$NBayesianPred
+          Cosine_Similarity = result$cosineSim
           
           cache$pg=c(cache$pg, paste(page))
-          cache[[paste(page)]] = data.frame(Results, result$Class, result$wordCount, result$NBayesianPred, result$cosineSim)
+          cache[[paste(page)]] = data.frame(Titles, Category, Word_Count, Naive_Bayesian, Cosine_Similarity)
           #table =  query$cache[page]
         }
       }
