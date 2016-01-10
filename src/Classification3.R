@@ -1,3 +1,5 @@
+source("kb.R")
+
 library(RISmed)
 library(tm)
 library(SnowballC)
@@ -8,6 +10,7 @@ library(RCurl)
 library(jsonlite)
 library(httr)
 library(reshape)
+
 require(cluster)
 require(stringr)
 
@@ -48,7 +51,7 @@ gSub<-function(abstract) {
 word.count<-function(sentences, rp.words, dr.words, mutation.symbol.words, mutation.details.words, .progress='none'){
   require(plyr)
   
-  scores = laply(sentences, function(sentence, rp.words, dr.words, mutation.symbol.words, mutation.details.words) {  	
+  scores = laply(sentences, function(sentence, rp.words, dr.words, mutation.symbol.words, mutation.details.words) {
     sentence<-gSub(sentence)
     
     all.corpus<-Corpus(VectorSource(sentence))
@@ -138,7 +141,7 @@ transform2df = function(sentences,col.names,mining.set,lexi,read.cat,.progress='
   require(plyr)
   require(stringr)
   
-  transformDF = laply(sentences, function(sentence,lexi){  	
+  transformDF = laply(sentences, function(sentence,lexi){
     sentence<-gSub(sentence)
     
     all.corpus<-Corpus(VectorSource(sentence))
@@ -199,13 +202,13 @@ cat.option<-function(read.cat){
 }
 
 is.one<-function(result){
-	ret<-0
-	for (x in 1:nrow(result)) {
-	if (result[x,1]==1) ret[x]<-1
-		else if (result[x,2]==1) ret[x]<-2	
-			else ret[x]<-3
-	}
-	return(ret)
+  ret<-0
+  for (x in 1:nrow(result)) {
+  if (result[x,1]==1) ret[x]<-1
+    else if (result[x,2]==1) ret[x]<-2  
+      else ret[x]<-3
+  }
+  return(ret)
 }
 
 tf.count<-function(abstract,index){
@@ -284,22 +287,22 @@ class_wordcount = function(query, abstracts, rp.tfidf, dr.tfidf, list)
 # Naive Bayesian
 class_bayesian = function(abstracts, rp.tfidf, dr.tfidf, list)
 {
-  train.df<-read.csv("..\\kb\\naive_bayesian.csv",header=T,sep="|")
+  train.df<-read.csv(NAIVE_BAYESIAN_DATA_FILE, header=T, sep="|")
   dr.tfidf1<-transposeDF(dr.tfidf,2)
   rp.tfidf1<-transposeDF(rp.tfidf,1)
   mining.set<-Reduce(function(x, y) merge(x, y, all=T), list(dr.tfidf1,rp.tfidf1))
   col.names<-names(mining.set)
 
-  if ((file.exists("..\\kb\\naive_bayesian_model")) &&
-      (file.info("..\\kb\\naive_bayesian_model")$mtime > 
-       file.info("..\\kb\\naive_bayesian.csv")$mtime))
+  if ((file.exists(NAIVE_BAYESIAN_MODEL_FILE)) &&
+      (file.info(NAIVE_BAYESIAN_MODEL_FILE)$mtime > 
+       file.info(NAIVE_BAYESIAN_DATA_FILE)$mtime))
   {
-    load("..\\kb\\naive_bayesian_model")
+    load(NAIVE_BAYESIAN_MODEL_FILE)
   }
   else
   {
     pred.model<-naiveBayes(category~., data=train.df)
-    save(pred.model, file = "..\\kb\\naive_bayesian_model")
+    save(pred.model, file = NAIVE_BAYESIAN_MODEL_FILE)
   }
   
   lexi<-colnames(train.df[-1])

@@ -46,6 +46,7 @@
 
 **Remarks**
 
- - ICMDB query in WordCount part is temporarily disabled due to low performance. (Refer to Line 269 - 273 in vsecs/Classification3.R)
- - All the viewed pages get cached when the user browsing different
- - Once the user searches another keyword,    the cache gets flushed and starts to cache for the new keyword.
+ - ICMDB query in WordCount part is temporarily bypassed due to low performance. (Refer to Line 269 - 273 in src/Classification3.R)
+ - The current page is cached when switching to a different page for the same keyword.
+ - That switching back to cached pages does not incur Google CSE query.
+ - On keyword switching, the cache is flushed.

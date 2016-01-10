@@ -1,7 +1,7 @@
 source("CSE.R")
 source("WebScraping.R")
 source("Classification3.R")
-
+source("kb.R")
 
 
 shinyServer
@@ -46,11 +46,8 @@ shinyServer
           #load("abstracts.RData") # debug
           contents<-webScraping(result) # abstracts #debug
           
-          rpKeywordsFile = "..\\kb\\rp_tfidf_95.csv"
-          drKeywordsFile = "..\\kb\\dr_tfidf_95.csv"
-          
-          rp.tfidf<-read.csv(rpKeywordsFile,header=T,sep="|", stringsAsFactors = FALSE)
-          dr.tfidf<-read.csv(drKeywordsFile,header=T,sep="|", stringsAsFactors = FALSE)
+          rp.tfidf<-read.csv(RP_KEYWORD_File, header=T, sep="|", stringsAsFactors = FALSE)
+          dr.tfidf<-read.csv(DR_KEYWORD_File, header=T, sep="|", stringsAsFactors = FALSE)
           
           result = class_cosine(contents, rp.tfidf, dr.tfidf, result)
           result = class_bayesian(contents, rp.tfidf, dr.tfidf, result)
@@ -67,7 +64,6 @@ shinyServer
           
           cache$pg=c(cache$pg, paste(page))
           cache[[paste(page)]] = data.frame(Titles, Category, Word_Count, Naive_Bayesian, Cosine_Similarity)
-          #table =  query$cache[page]
         }
       }
     })
@@ -158,7 +154,7 @@ shinyServer
     
     on.exit({
       cat("clean up\n")
-      file.remove("..\\kb\\naive_bayesian_model")
+      file.remove(NAIVE_BAYESIAN_MODEL_FILE)
     })
   }
 )
